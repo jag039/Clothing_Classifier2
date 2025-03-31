@@ -1,7 +1,7 @@
 # Classifier Model for Garment Classification
 
 ## 1. Introduction
-The goal of this project was to train a deep learning model to classify clothing items into categories such as **Upper Garment**, **Lower Garment**, and other types. We aimed to structure classifications hierarchically by **gender** (e.g., men, women), **type** (e.g., shirt, pants), and **subcategories** (e.g., casual, formal).
+The goal of this project was to train a deep learning model to classify clothing items into categories such as **Upper Garment**, **Lower Garment**, and **Both** types. We aimed to structure classifications hierarchically by **gender** (e.g., men, women), and **type** (e.g., shirt, pants).
 
 To achieve this, we utilized a pre-trained deep learning model and adapted it for improved classification performance.
 
@@ -9,17 +9,23 @@ To achieve this, we utilized a pre-trained deep learning model and adapted it fo
 
 ## 2. Model Selection and Adaptation
 
-We based our implementation on the GitHub repository: **[FarnooshGhadiri/Cloth_category_classifier](https://github.com/FarnooshGhadiri/Cloth_category_classifier)**. This model uses **ResNet-50** as a backbone for feature extraction.
+This model utilizes a **ResNet-50** backbone for feature extraction, leveraging the pretrained weights from ImageNet to enable strong feature representation from clothing images.
 
 ### **Model Architecture**
-The custom `ClothingClassifier` includes:
-- A **ResNet-50** backbone for robust feature extraction.
-- A **fully connected layer** to reduce the dimensionality to 512.
-- A **presence classifier** to determine whether **topwear**, **bottomwear**, or **both** are present.
-- Three dedicated classifiers for:
-  - Topwear categories
-  - Bottomwear categories
-  - Full-body garment categories (e.g., dresses)
+The `ClothingClassifier` is built as follows:
+
+- **Backbone**: A pre-trained **ResNet-50** is used, with its final classification layer removed (`resnet.children()[:-1]`). The output feature map is globally averaged and passed to the next stage.
+- **Fully Connected Layer**: A linear layer projects the ResNet features into a 1024-dimensional space.
+- **Classification Head**: A deep, fully connected head processes the 1024-dimensional feature vector through multiple layers with batch normalization, ReLU activations, and dropout regularization. The final output is a linear layer projecting to `num_classes`.
+
+The classifier head consists of:
+- Linear(1024 → 512) → BatchNorm1d → ReLU → Dropout(0.2)
+- Linear(512 → 256) → BatchNorm1d → ReLU → Dropout(0.2)
+- Linear(256 → 128) → BatchNorm1d → ReLU → Dropout(0.2)
+- Linear(128 → `num_classes`)
+
+### **Transfer Learning and Fine-Tuning**
+To balance learning new task-specific features while preserving the pretrained knowledge from ResNet-50, the model includes an option to **freeze early layers** of the backbone. The number of frozen layers can be adjusted using the `num_frozen_resnet_layers` argument during initialization.
 
 ---
 
@@ -41,17 +47,17 @@ The following table shows the number of images for each class in the dataset:
 
 | Class | Label     | Images |
 |-------|-----------|--------|
-| 0     | Class 0   | 4911   |
-| 1     | Class 1   | 2662   |
-| 2     | Class 2   | 2093   |
-| 3     | Class 3   | 2625   |
-| 4     | Class 4   | 3086   |
-| 5     | Class 5   | 7377   |
-| 6     | Class 6   | 2016   |
-| 7     | Class 7   | 1415   |
-| 8     | Class 8   | 3933   |
-| 9     | Class 9   | 2955   |
-| 10    | Class 10  | 14432  |
+| 0     | Class 0 (Blouse)   | 4911   |
+| 1     | Class 1 (Cardigan)  | 2662   |
+| 2     | Class 2 (Jacket)  | 2093   |
+| 3     | Class 3 (Sweater)  | 2625   |
+| 4     | Class 4 (Tank)  | 3086   |
+| 5     | Class 5 (Tee)  | 7377   |
+| 6     | Class 6 (Top)  | 2016   |
+| 7     | Class 7 (Jeans)  | 1415   |
+| 8     | Class 8 (Shorts)  | 3933   |
+| 9     | Class 9 (Skirts)  | 2955   |
+| 10    | Class 10 (Dress) | 14432  |
 
 ---
 
