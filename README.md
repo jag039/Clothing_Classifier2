@@ -29,7 +29,33 @@ To balance learning new task-specific features while preserving the pretrained k
 
 ---
 
-## 3. Training Strategy
+## 3. Class Distribution
+
+The following table shows the number of images for each class in the dataset:
+
+| Class | Label     | Images |
+|-------|-----------|--------|
+| 0     | Class 0 (Blouse)      | 24557 |
+| 1     | Class 1 (Cardigan)    | 13311 |
+| 2     | Class 2 (Jacket)      | 10467 |
+| 3     | Class 3 (Sweater)     | 13123 |
+| 4     | Class 4 (Tank)        | 15429 |
+| 5     | Class 5 (Tee)         | 36887 |
+| 6     | Class 6 (Top)         | 10078 |
+| 7     | Class 7 (Jeans)       | 7076  |
+| 8     | Class 8 (Shorts)      | 19666 |
+| 9     | Class 9 (Skirts)      | 14773 |
+| 10    | Class 10 (Dress)      | 72158 |
+
+---
+
+## 4. Training Strategy
+
+### **Dataset Split**
+We used a stratified split to maintain class distribution across all subsets:
+- **Training set:** 60%
+- **Validation set:** 20%
+- **Test set:** 20%
 
 ### **Hyperparameter Tuning**
 We performed **hyperparameter tuning** to determine the optimal number of frozen layers in the ResNet-50 backbone. This helped balance between retaining pretrained knowledge and adapting to the new task, improving convergence and generalization.
@@ -38,26 +64,6 @@ We performed **hyperparameter tuning** to determine the optimal number of frozen
 To address class imbalance:
 - We used a **weighted cross-entropy loss function**, giving more weight to minority classes to prevent the model from overfitting to dominant categories.
 - We applied **data augmentation transformations** (e.g., flipping, color jitter, cropping) more aggressively on **minority classes** to synthetically increase their sample size and variability.
-
----
-
-## 4. Class Distribution
-
-The following table shows the number of images for each class in the dataset:
-
-| Class | Label     | Images |
-|-------|-----------|--------|
-| 0     | Class 0 (Blouse)   | 4911   |
-| 1     | Class 1 (Cardigan)  | 2662   |
-| 2     | Class 2 (Jacket)  | 2093   |
-| 3     | Class 3 (Sweater)  | 2625   |
-| 4     | Class 4 (Tank)  | 3086   |
-| 5     | Class 5 (Tee)  | 7377   |
-| 6     | Class 6 (Top)  | 2016   |
-| 7     | Class 7 (Jeans)  | 1415   |
-| 8     | Class 8 (Shorts)  | 3933   |
-| 9     | Class 9 (Skirts)  | 2955   |
-| 10    | Class 10 (Dress) | 14432  |
 
 ---
 
